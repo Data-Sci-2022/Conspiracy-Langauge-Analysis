@@ -8,7 +8,7 @@ Completed the import of selected JSON (JavaScript Object Notation) files into R,
 
 1. *LOCO_LFs.json* (573.1 MB): a JSON file containing the full set of lexical features. 96,746 rows (documents) × 288 columns (NEmpath = 194; NLIWC = 93)
 
-The JSON files were successfully converted into rectangular form using `tibble()` and `unnest_wider()`. Due to the sheer size of the data (over half a gigabyte per JSON file), processing the files takes up a considerable amount of memory (and time). My next step in harnessing the data will be to utilize `dplyr` to remove columns and information that is uninformative or that won't be used in my particular analysis, hopefully reducing the large size of the data so that it is less demanding to work with. See data import process [here]().  
+The JSON files were successfully converted into rectangular form using `tibble()` and `unnest_wider()`. Due to the sheer size of the data (over half a gigabyte per JSON file), processing the files takes up a considerable amount of memory (and time). My next step in harnessing the data will be to utilize `dplyr` to remove columns and information that is uninformative or that won't be used in my particular analysis, hopefully reducing the large size of the data so that it is less demanding to work with. See data import process [here](data/data_import.md).  
 
 During this process, I ran into a major issue with the too-large .Rds files appearing in git's commit history and wound up having to clone this repo.
 

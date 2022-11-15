@@ -57,7 +57,9 @@ topic_description.json, website_metadata.json:
 
 Because this analysis will focus on lexical features and social media
 shares regardless of the topic of the document, we are only importing
-the LOCO_LFs.json and LOCO.json data. - [LOCO dataset variables
+the LOCO_LFs.json and LOCO.json data. 
+
+- [LOCO dataset variables
 descriptions](https://link.springer.com/article/10.3758/s13428-021-01698-z/tables/6)
 
 ## Data import
