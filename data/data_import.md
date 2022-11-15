@@ -63,9 +63,9 @@ descriptions](https://link.springer.com/article/10.3758/s13428-021-01698-z/table
 ## Data import
 
 **Note:** Due to the large size and processing demands of the raw data
-files, `eval = FALSE` is added to chunk headers for the purpose of
-knitting this file. To run these chunks on your own, set to `TRUE` or
-remove the argument from the chunk headers as needed.
+files, chunks have been cached and `eval = FALSE` added to chunk headers
+for the purpose of knitting this file. To run these chunks on your own,
+set to `TRUE` or remove the argument from the chunk headers as needed.
 
 ``` r
 LOCO_LFs <- fromJSON(file = "../../LOCO_LFs.json")
@@ -75,35 +75,158 @@ LOCO_LFs <- fromJSON(file = "../../LOCO_LFs.json")
 LOCO <- fromJSON(file = "../../LOCO.json")
 ```
 
+Exploring the elements of lists in JSON files; each nested list
+corresponds to one document
+
 ``` r
-## Exploring elements of list in JSON files; each nested list corresponds to one document
 LOCO[1] %>%  str()
+```
+
+    ## List of 1
+    ##  $ :List of 20
+    ##   ..$ doc_id                   : chr "C00001"
+    ##   ..$ URL                      : chr "https://humansarefree.com/2016/12/the-conspiracy-against-lt-col-michael-aquino-satanic-pedophile-clinton-reagan"| __truncated__
+    ##   ..$ website                  : chr "humansarefree.com"
+    ##   ..$ seeds                    : chr "michael.jackson.death"
+    ##   ..$ date                     : chr "2016-12-30"
+    ##   ..$ subcorpus                : chr "conspiracy"
+    ##   ..$ title                    : chr "The 'Conspiracy' Against Lt. Col. Michael Aquino — Satanic Pedophile (Clinton, Reagan, Bush, Cheney, Kissinger)"
+    ##   ..$ txt                      : chr "For those who don’t know, Michael Aquino was a Psychological Warfare Specialist in the US Army from 1968 until "| __truncated__
+    ##   ..$ txt_nwords               : num 4075
+    ##   ..$ txt_nsentences           : num 160
+    ##   ..$ txt_nparagraphs          : num 120
+    ##   ..$ topic_k100               : chr "k100_24"
+    ##   ..$ topic_k200               : chr "k200_75"
+    ##   ..$ topic_k300               : chr "k300_192"
+    ##   ..$ mention_conspiracy       : num 8
+    ##   ..$ conspiracy_representative: logi FALSE
+    ##   ..$ cosine_similarity        : num 0.177
+    ##   ..$ FB_shares                : num 13
+    ##   ..$ FB_comments              : num 2
+    ##   ..$ FB_reactions             : num 4
+
+``` r
 LOCO_LFs[1] %>% str()
 ```
+
+    ## List of 1
+    ##  $ :List of 288
+    ##   ..$ doc_id                      : chr "C00001"
+    ##   ..$ LIWC_WC                     : num 4051
+    ##   ..$ LIWC_Analytic               : num 88.9
+    ##   ..$ LIWC_Clout                  : num 77
+    ##   ..$ LIWC_Authentic              : num 14
+    ##   ..$ LIWC_Tone                   : num 5.22
+    ##   ..$ LIWC_WPS                    : num 22.3
+    ##   ..$ LIWC_Sixltr                 : num 27.2
+    ##   ..$ LIWC_Dic                    : num 79.3
+    ##   ..$ LIWC_function               : num 46.6
+    ##   ..$ LIWC_pronoun                : num 9.78
+    ##   ..$ LIWC_ppron                  : num 4.2
+    ##   ..$ LIWC_i                      : num 0.17
+    ##   ..$ LIWC_we                     : num 0.42
+    ##   ..$ LIWC_you                    : num 0.02
+    ##   ..$ LIWC_shehe                  : num 2.42
+    ##   ..$ LIWC_they                   : num 1.16
+    ##   ..$ LIWC_ipron                  : num 5.58
+    ##   ..$ LIWC_article                : num 6.96
+    ##   ..$ LIWC_prep                   : num 15.8
+    ##   ..$ LIWC_auxverb                : num 6.81
+    ##   ..$ LIWC_adverb                 : num 3.33
+    ##   ..$ LIWC_conj                   : num 6.07
+    ##   ..$ LIWC_negate                 : num 0.59
+    ##   ..$ LIWC_verb                   : num 10.5
+    ##   ..$ LIWC_adj                    : num 4.32
+    ##   ..$ LIWC_compare                : num 2.72
+    ##   ..$ LIWC_interrog               : num 1.63
+    ##   ..$ LIWC_number                 : num 2.47
+    ##   ..$ LIWC_quant                  : num 2.2
+    ##   ..$ LIWC_affect                 : num 4.81
+    ##   ..$ LIWC_posemo                 : num 1.41
+    ##   ..$ LIWC_negemo                 : num 3.36
+    ##   ..$ LIWC_anx                    : num 0.27
+    ##   ..$ LIWC_anger                  : num 1.48
+    ##   ..$ LIWC_sad                    : num 0.1
+    ##   ..$ LIWC_social                 : num 9.73
+    ##   ..$ LIWC_family                 : num 0.2
+    ##   ..$ LIWC_friend                 : num 0.12
+    ##   ..$ LIWC_female                 : num 0.62
+    ##   ..$ LIWC_male                   : num 2.42
+    ##   ..$ LIWC_cogproc                : num 9.48
+    ##   ..$ LIWC_insight                : num 2.3
+    ##   ..$ LIWC_cause                  : num 2.2
+    ##   ..$ LIWC_discrep                : num 0.49
+    ##   ..$ LIWC_tentat                 : num 1.58
+    ##   ..$ LIWC_certain                : num 1.68
+    ##   ..$ LIWC_differ                 : num 2.02
+    ##   ..$ LIWC_percept                : num 1.23
+    ##   ..$ LIWC_see                    : num 0.79
+    ##   ..$ LIWC_hear                   : num 0.3
+    ##   ..$ LIWC_feel                   : num 0.1
+    ##   ..$ LIWC_bio                    : num 1.6
+    ##   ..$ LIWC_body                   : num 0.32
+    ##   ..$ LIWC_health                 : num 0.77
+    ##   ..$ LIWC_sexual                 : num 0.62
+    ##   ..$ LIWC_ingest                 : num 0.05
+    ##   ..$ LIWC_drives                 : num 8.89
+    ##   ..$ LIWC_affiliation            : num 1.21
+    ##   ..$ LIWC_achieve                : num 0.86
+    ##   ..$ LIWC_power                  : num 6.02
+    ##   ..$ LIWC_reward                 : num 0.39
+    ##   ..$ LIWC_risk                   : num 0.67
+    ##   ..$ LIWC_focuspast              : num 5.23
+    ##   ..$ LIWC_focuspresent           : num 3.68
+    ##   ..$ LIWC_focusfuture            : num 0.42
+    ##   ..$ LIWC_relativ                : num 12.9
+    ##   ..$ LIWC_motion                 : num 1.21
+    ##   ..$ LIWC_space                  : num 7.8
+    ##   ..$ LIWC_time                   : num 4.07
+    ##   ..$ LIWC_work                   : num 3.36
+    ##   ..$ LIWC_leisure                : num 0.42
+    ##   ..$ LIWC_home                   : num 0.27
+    ##   ..$ LIWC_money                  : num 0.79
+    ##   ..$ LIWC_relig                  : num 0.99
+    ##   ..$ LIWC_death                  : num 0.47
+    ##   ..$ LIWC_informal               : num 0.25
+    ##   ..$ LIWC_swear                  : num 0
+    ##   ..$ LIWC_netspeak               : num 0.1
+    ##   ..$ LIWC_assent                 : num 0.02
+    ##   ..$ LIWC_nonflu                 : num 0.15
+    ##   ..$ LIWC_filler                 : num 0
+    ##   ..$ LIWC_AllPunc                : num 14.6
+    ##   ..$ LIWC_Period                 : num 4.47
+    ##   ..$ LIWC_Comma                  : num 5.63
+    ##   ..$ LIWC_Colon                  : num 0.05
+    ##   ..$ LIWC_SemiC                  : num 0
+    ##   ..$ LIWC_QMark                  : num 0.02
+    ##   ..$ LIWC_Exclam                 : num 0.02
+    ##   ..$ LIWC_Dash                   : num 0.99
+    ##   ..$ LIWC_Quote                  : num 0.44
+    ##   ..$ LIWC_Apostro                : num 1.28
+    ##   ..$ LIWC_Parenth                : num 1.23
+    ##   ..$ LIWC_OtherP                 : num 0.44
+    ##   ..$ Empath_help                 : num 0.002
+    ##   ..$ Empath_office               : num 0.003
+    ##   ..$ Empath_dance                : num 0
+    ##   ..$ Empath_money                : num 0.0022
+    ##   ..$ Empath_wedding              : num 0.0022
+    ##   .. [list output truncated]
 
 ## Converting JSON files into rectangular dataframes
 
 ``` r
 ## Convert LOCO_LFs JSON into tibble
 LOCO_LFs_df <- LOCO_LFs %>% 
-  tibble()
+  tibble() %>% 
+## Take each element of list-column and make new columns (rectangling)
+  unnest_wider('.')
 ```
 
 ``` r
 ## Convert LOCO JSON into tibble
 LOCO_df <- LOCO %>% 
-  tibble()
-```
-
-``` r
+  tibble() %>% 
 ## Take each element of list-column and make new columns (rectangling)
-LOCO_LFs_df <- LOCO_LFs_df %>% 
-  unnest_wider(LOCO_LFs)
-```
-
-``` r
-## Take each element of list-column and make new columns (rectangling)
-LOCO_df <- LOCO_df %>% 
   unnest_wider('.')
 ```
 
