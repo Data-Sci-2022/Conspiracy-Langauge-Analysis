@@ -2,13 +2,13 @@
 
 ### 2nd Progress Report 
 
-In order to take a closer look at the dataframes, LOCO_df and LOCO_LFs_df (tibbles which are 96,743 x 94 and 96,743 x 288, respectively), I split the dataframes to take the first 50 rows of each and create smaller, sample dataframes which I saved as Rds files for easy tinkering and exploration. 
+In order to take a closer look at the dataframes, LOCO_df and LOCO_LFs_df (tibbles which are 96,743 x 94 (559 Mb) and 96,743 x 288 (217.8 Mb), respectively), I split the dataframes to take the first 50 rows of each and create smaller, sample dataframes. I stored these as Rds files for easy tinkering and exploration. 
 
-Using these smaller tibbles I identified various columns that are not useful for this project. In order to shrink down the size of our dataframes, I used `dplyr` to select only the relevant columns. For example, columns such as 'txt', which contained entire documents as raw strings, were removed since they were bloating the data considerably. Thus, the size of the data was reduced considerably: LOCO_df went from 559 Mb to 25.1 Mb and LOCO_LFs_df from 217.8 Mb to 74.6 Mb.
+Using these smaller tibbles I identified various columns that are not useful for this project. In order to shrink down the size of our dataframes, I used `dplyr` to select only the relevant columns. For example, columns such as 'txt', which contained the entire documents as raw strings, were removed since they were bloating the data considerably. Thus, the size of the data were reduced: LOCO_df shrunk from 559 Mb to 25.1 Mb and LOCO_LFs_df from 217.8 Mb to 74.6 Mb.
 
-Following the selection of the columns, I decided to join the two dataframes into a single tibble. The dataframes were successfully joined by doc_id, resulting in a final dataframe ready for analysis, LOCO_final, a tibble consisting of 96,743 observations of 103 variables, stored as LOCO_final.Rds. 
+Following the selection of the necessary columns, I decided to join the two dataframes into a single tibble for ease of analysis. The dataframes were successfully joined by doc_id, resulting in a final dataframe ready for analysis: LOCO_final. This dataframe is a tibble consisting of 96,743 observations (documents) of 103 variables, stored as LOCO_final.Rds. 
 
-This data wrangling process, including some descriptive statistics on the LOCO_final dataframe, is available [here](data/data_wrangling.md).
+This data wrangling process, including some descriptive statistics on LOCO_final, is available [here](data/data_wrangling.md).
 
 #### Sharing plan & Licence
 
