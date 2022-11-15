@@ -73,6 +73,11 @@ LOCO_LFs_df_tidy %>%
 LOCO_final <- left_join(LOCO_df_tidy, LOCO_LFs_df_tidy)
 ```
 ```{r}
+## Printing summary statistics about each column contained in the final dataframe
+summary(LOCO_final)
+```
+
+```{r}
 ## Saving final dataframe as Rds file
 write_rds(LOCO_final, "LOCO_final.Rds")
 ```
