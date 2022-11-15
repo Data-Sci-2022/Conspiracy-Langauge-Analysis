@@ -248,4 +248,4 @@ proper size for upload.
 
 ## Next steps
 
-To be continued in [Data wrangling](data_wrangling.md)).
+To be continued in [Data wrangling](data_wrangling.md).
