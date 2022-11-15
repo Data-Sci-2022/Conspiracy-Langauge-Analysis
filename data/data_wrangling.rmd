@@ -1,0 +1,78 @@
+---
+title: "Data wrangling"
+output: 
+  github_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load necessary rjson, tidyverse, purrr packages
+library(rjson)
+library(tidyverse)
+library(purrr)
+```
+
+Continued from [Data import](data_import.md).
+
+## Taking a look inside the dataframes
+
+```{r}
+## Importing Rds files
+LOCO_df <- readRDS('../../LOCO_df.Rds')
+LOCO_LFs_df <- readRDS('../../LOCO_LFs_df.Rds')
+```
+
+
+```{r}
+## Sampling the first 50 rows of each df
+LOCO_df_sample <- LOCO_df[0:50,]
+LOCO_LFs_df_sample <- LOCO_LFs_df[0:50,]
+```
+
+```{r}
+LOCO_df_sample
+```
+
+```{r}
+LOCO_LFs_df_sample
+```
+```{r}
+## Saving sample Rds files
+write_rds(LOCO_df_sample, "LOCO_df_sample.Rds")
+write_rds(LOCO_LFs_df_sample, "LOCO_LFs_df_sample.Rds")
+```
+
+## Data wrangling
+
+By taking a look through the data objects above, I identified various columns that are not useful for this particular analysis. In order to shrink down the size of our dataframes, the code below will select only the necessary columns.
+
+```{r}
+LOCO_df_tidy <- LOCO_df %>% 
+## Selecting columns with relevant metadata
+  select(doc_id, date, website, subcorpus, title, txt_nwords, cosine_similarity, starts_with('FB_'))
+## The size of the dataframe has been reduced considerably since removing the bulk of the data (such as raw text of each doc)
+LOCO_df_tidy %>% 
+  object.size() %>% 
+  format("Mb")
+```
+
+```{r}
+LOCO_LFs_df_tidy <- LOCO_LFs_df %>% 
+## Selecting only the LWIC columns that will be used for this analysis
+  select(doc_id, starts_with('LIWC_'))
+## The size of this dataframe has also been reduced, from 288 to 94 columns 
+LOCO_LFs_df_tidy %>% 
+  object.size() %>% 
+  format("Mb")
+```
+## Joining the dataframes
+
+```{r}
+## Joining the data by doc_id in order to conduct analyses
+LOCO_final <- left_join(LOCO_df_tidy, LOCO_LFs_df_tidy)
+```
+```{r}
+## Saving final dataframe as Rds file
+write_rds(LOCO_final, "LOCO_final.Rds")
+```

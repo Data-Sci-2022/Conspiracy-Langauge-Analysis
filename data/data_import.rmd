@@ -44,24 +44,24 @@ Because this analysis will focus on lexical features and social media shares reg
 
 **Note:** Due to the large size and processing demands of the raw data files, chunks have been cached and `eval = FALSE` added to chunk headers for the purpose of knitting this file. To run these chunks on your own, set to `TRUE` or remove the argument from the chunk headers as needed.
 
-```{r, eval = TRUE, cache=TRUE}
+```{r, eval = FALSE, cache=TRUE}
 LOCO_LFs <- fromJSON(file = "../../LOCO_LFs.json")
 ```
 
-```{r, eval = TRUE, cache=TRUE}
+```{r, eval = FALSE, cache=TRUE}
 LOCO <- fromJSON(file = "../../LOCO.json")
 ```
 
 Exploring the elements of lists in JSON files; each nested list corresponds to one document
-```{r, eval = TRUE, cachFe=TRUE}
+```{r, eval = FALSE, cachFe=TRUE}
 LOCO[1] %>%  str()
 ```
-```{r, eval = TRUE, cache=TRUE}
+```{r, eval = FALSE, cache=TRUE}
 LOCO_LFs[1] %>% str()
 ```
 
 ## Converting JSON files into rectangular dataframes
-```{r, eval = TRUE, cache=TRUE}
+```{r, eval = FALSE, cache=TRUE}
 ## Convert LOCO_LFs JSON into tibble
 LOCO_LFs_df <- LOCO_LFs %>% 
   tibble() %>% 
@@ -69,7 +69,7 @@ LOCO_LFs_df <- LOCO_LFs %>%
   unnest_wider('.')
 ```
 
-```{r, eval = TRUE, cache=TRUE}
+```{r, eval = FALSE, cache=TRUE}
 ## Convert LOCO JSON into tibble
 LOCO_df <- LOCO %>% 
   tibble() %>% 
@@ -89,3 +89,6 @@ write_rds(LOCO_LFs_df, "data/LOCO_LFs_df.Rds")
 ```
 
 **Note:** these Rds are currently way too large (> 25mb) for Github's liking; in the next stages of data wrangling they will hopefully be the proper size for upload.
+
+## Next steps
+To be continued in [Data wrangling](data_wrangling.md)).
