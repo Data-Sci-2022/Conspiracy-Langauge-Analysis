@@ -1,5 +1,21 @@
 # Progress report
 
+### 2nd Progress Report 
+
+In order to take a closer look at the dataframes, LOCO_df and LOCO_LFs_df (tibbles which are 96,743 x 94 and 96,743 x 288, respectively), I split the dataframes to take the first 50 rows of each and create smaller, sample dataframes which I saved as Rds files for easy tinkering and exploration. 
+
+Using these smaller tibbles I identified various columns that are not useful for this project. In order to shrink down the size of our dataframes, I used `dplyr` to select only the relevant columns. For example, columns such as 'txt', which contained entire documents as raw strings, were removed since they were bloating the data considerably. Thus, the size of the data was reduced considerably: LOCO_df went from 559 Mb to 25.1 Mb and LOCO_LFs_df from 217.8 Mb to 74.6 Mb.
+
+Following the selection of the columns, I decided to join the two dataframes into a single tibble. The dataframes were successfully joined by doc_id, resulting in a final dataframe ready for analysis, LOCO_final, a tibble consisting of 96,743 observations of 103 variables, stored as LOCO_final.Rds. 
+
+This data wrangling process, including some descriptive statistics on the LOCO_final dataframe, is available [here](data/data_wrangling.md).
+
+#### Sharing plan & Licence
+
+The sharing plan for this project's data has not changed since the first progress report. LOCO and all related materials are made freely available by its authors under basic copyright, with no licence to be found. The data does not contain any type of sensitive or personal information from its source, and I will not be contributing any data of the sort, so I plan to share this project's data and analysis in its entirety. 
+
+As such, I've chosen the MIT Licesne and updated the [License](/LICENSE) file accordingly. The MIT License is short and to the point. It lets people do almost anything they want with this project. 
+
 ### 1st Progress Report 
 
 Completed the import of selected JSON (JavaScript Object Notation) files into R, excluding 3 files from the original corpus: topic_gamma.json, topic_description.json, website_metadata.json. Because this analysis will focus on lexical features and social media shares regardless of the topic of the document, I plan to rely only on data from *LOCO_LFs.json* and *LOCO.json*.
