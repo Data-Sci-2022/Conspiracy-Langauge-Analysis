@@ -20,7 +20,7 @@ Miani, A., Hills, T. & Bangerter, A. LOCO: The 88-million-word language of consp
   - Step 1: Data import [(md)](data/data_import.md) [(rmd)](data/data_import.rmd)
   - Step 2: Data wrangling [(md)](data/data_wrangling.md) [(rmd)](data/data_wrangling.rmd)
   - Step 3: Analysis walkthrough [(md)](data/analysis_walkthrough.md) [(rmd)](data/analysis_walkthrough.rmd)
-  - [Images folder](data/images/) contains all the visualizations generated throughout the analysis 
+  - [Images](data/images/) contains all the visualizations generated throughout the analysis 
   
 - [Presentation.pdf](presentation.pdf) is a copy of the presentation aid utilized for a presentation about this project on December 8, 2022. 
 
