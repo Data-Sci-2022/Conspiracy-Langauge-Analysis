@@ -1,0 +1,296 @@
+---
+title: "Data analysis walkthrough"
+author: "Sen Sub Laban"
+date: "December 15, 2022"
+output: 
+  github_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path="images/")
+library(ranger)
+library(tidyverse)
+library(ggplot2)
+library(vip)
+library(car)
+library(moments)
+```
+
+## Data import
+
+```{r}
+## Reading in the finalized data frame
+loco <- readRDS('LOCO_final.Rds')
+```
+
+```{r}
+## Preview of the data, first 6 rows 
+head(loco)
+```
+
+## Visualizing FB engagement variables
+
+```{r Conspiracy Facebook engagements}
+## Conspiracy Facebook engagement
+options(scipen=999)
+loco %>% 
+  filter(subcorpus=="conspiracy") %>% 
+  pivot_longer(starts_with("FB_"), names_to="type", values_to="number") %>%
+  filter(number > 0) %>% 
+  group_by(type) %>% 
+  mutate(mean_engage=mean(number), skewness=skewness(number)) %>% 
+  ggplot(aes(x=number)) + 
+  geom_density(color="black", fill="gray") +
+  scale_x_log10() +
+  facet_grid(type ~ .) +
+  geom_text(aes(x=100000, y=0.1, label=round(skewness,2), color="red")) +
+  ggtitle("Conspiracy FB engagement variables") +
+  guides(colour=FALSE) +
+  theme_bw()
+```
+
+```{r Mainstream Facebook engagements}
+## Mainstream Facebook engagement
+options(scipen=999)
+loco %>% 
+  filter(!subcorpus=="conspiracy") %>% 
+  pivot_longer(starts_with("FB_"), names_to="type", values_to="number") %>%
+  filter(number > 0) %>%
+  group_by(type) %>% 
+  mutate(mean_engage=mean(number), skewness=skewness(number)) %>% 
+  ggplot(aes(x=number)) + 
+  geom_density(color="black", fill="gray") +
+  scale_x_log10() +
+  facet_grid(type ~ .) +
+  geom_text(aes(x=100000, y=0.1, label=round(skewness,2), color="red")) +
+  ggtitle("Mainstream FB engagement variables") +
+  guides(colour=FALSE) +
+  theme_bw()
+```
+
+## Creating subsets of data based on subcorpora
+
+```{r}
+## Creating a subset of conspiracy documents only
+consp_engage <- loco %>% 
+  filter(subcorpus == "conspiracy") %>% 
+  ## Creating new column engagement that sums shares, reactions, and comments
+  mutate(engagement = rowSums(.[8:10])) %>% 
+  relocate(engagement, .after= FB_reactions) %>% 
+  ## Filtering documents with no engagement at all
+  filter(engagement > 0) %>% 
+  mutate(engagelog = log(engagement)) %>% 
+  relocate(engagelog, .after= engagement)
+  
+```
+
+```{r}
+## Creating a subset of mainstream documents only
+mainst_engage <- loco %>% 
+  filter(!subcorpus == "conspiracy") %>% 
+  mutate(engagement = rowSums(.[8:10])) %>% 
+  relocate(engagement, .after= FB_reactions) %>% 
+  filter(engagement > 0) %>% 
+  mutate(engagelog = log(engagement)) %>% 
+  relocate(engagelog, .after=engagement)
+```
+
+```{r Conspiracy overall engagement}
+## Visualizing new overall engagement variable
+consp_engage %>% 
+  mutate(mean_engage=mean(engagement), skewness=skewness(engagement)) %>% 
+  ggplot(aes(x=engagement)) +
+  geom_density(color="black", fill="gray")+
+  scale_x_log10() +
+  geom_text(aes(x=100000, y=0.15, label=round(mean_engage,2))) +
+  geom_text(aes(x=100000, y=0.1, label=round(skewness,2), color="red")) +
+  ggtitle("Conspiracy overall engagement") +
+  guides(colour=FALSE) +
+  theme_bw()
+```
+
+```{r Mainstream overall engagement}
+mainst_engage %>% 
+  mutate(mean_engage=mean(engagement), skewness=skewness(engagement)) %>% 
+  ggplot(aes(x=engagement)) +
+  geom_density(color="black", fill="gray")+
+  scale_x_log10() +
+  geom_text(aes(x=100000, y=0.15, label=round(mean_engage,2))) +
+  geom_text(aes(x=100000, y=0.1, label=round(skewness,2), color="red")) +
+  ggtitle("Mainstream overall engagement") +
+  guides(colour=FALSE) +
+  theme_bw()
+```
+
+
+## Generating random forests
+
+```{r}
+## Generating random forest for conspiracy documents
+set.seed(12)
+consp_forest <- ranger(engagelog ~ LIWC_WC + LIWC_Analytic + LIWC_Clout + LIWC_Authentic + LIWC_Tone + LIWC_WPS + LIWC_Sixltr + LIWC_Dic + LIWC_function + LIWC_pronoun + LIWC_ppron + LIWC_i + LIWC_we + LIWC_you + LIWC_shehe + LIWC_they + LIWC_ipron + LIWC_article + LIWC_prep + LIWC_auxverb + LIWC_adverb + LIWC_conj + LIWC_negate +   LIWC_verb + LIWC_adj + LIWC_compare + LIWC_interrog + LIWC_number + LIWC_quant + LIWC_affect + LIWC_posemo + LIWC_negemo + LIWC_anx + LIWC_anger + LIWC_sad + LIWC_social + LIWC_family + LIWC_friend + LIWC_female + LIWC_male + LIWC_cogproc + LIWC_insight + LIWC_cause + LIWC_discrep + LIWC_tentat + LIWC_certain + LIWC_differ + LIWC_percept + LIWC_see + LIWC_hear + LIWC_feel + LIWC_bio + LIWC_body + LIWC_health + LIWC_sexual + LIWC_ingest + LIWC_drives + LIWC_affiliation + LIWC_achieve + LIWC_power + LIWC_reward + LIWC_risk + LIWC_focuspast + LIWC_focuspresent + LIWC_focusfuture + LIWC_relativ + LIWC_motion + LIWC_space + LIWC_time + LIWC_work + LIWC_leisure + LIWC_home + LIWC_money + LIWC_relig + LIWC_death + LIWC_informal + LIWC_swear + LIWC_netspeak + LIWC_assent + LIWC_nonflu + LIWC_filler + LIWC_AllPunc + LIWC_Period + LIWC_Comma + LIWC_Colon + LIWC_SemiC + LIWC_QMark + LIWC_Exclam + LIWC_Dash + LIWC_Quote + LIWC_Apostro + LIWC_Parenth + LIWC_OtherP, 
+                   data=consp_engage, 
+                   importance='impurity', mtry=3)
+```
+
+```{r}
+## Generating random forest for mainstream documents
+set.seed(12)
+mainst_forest <- ranger(engagelog ~ LIWC_WC + LIWC_Analytic + LIWC_Clout + LIWC_Authentic + LIWC_Tone + LIWC_WPS + LIWC_Sixltr + LIWC_Dic + LIWC_function + LIWC_pronoun + LIWC_ppron + LIWC_i + LIWC_we + LIWC_you + LIWC_shehe + LIWC_they + LIWC_ipron + LIWC_article + LIWC_prep + LIWC_auxverb + LIWC_adverb + LIWC_conj + LIWC_negate +   LIWC_verb + LIWC_adj + LIWC_compare + LIWC_interrog + LIWC_number + LIWC_quant + LIWC_affect + LIWC_posemo + LIWC_negemo + LIWC_anx + LIWC_anger + LIWC_sad + LIWC_social + LIWC_family + LIWC_friend + LIWC_female + LIWC_male + LIWC_cogproc + LIWC_insight + LIWC_cause + LIWC_discrep + LIWC_tentat + LIWC_certain + LIWC_differ + LIWC_percept + LIWC_see + LIWC_hear + LIWC_feel + LIWC_bio + LIWC_body + LIWC_health + LIWC_sexual + LIWC_ingest + LIWC_drives + LIWC_affiliation + LIWC_achieve + LIWC_power + LIWC_reward + LIWC_risk + LIWC_focuspast + LIWC_focuspresent + LIWC_focusfuture + LIWC_relativ + LIWC_motion + LIWC_space + LIWC_time + LIWC_work + LIWC_leisure + LIWC_home + LIWC_money + LIWC_relig + LIWC_death + LIWC_informal + LIWC_swear + LIWC_netspeak + LIWC_assent + LIWC_nonflu + LIWC_filler + LIWC_AllPunc + LIWC_Period + LIWC_Comma + LIWC_Colon + LIWC_SemiC + LIWC_QMark + LIWC_Exclam + LIWC_Dash + LIWC_Quote + LIWC_Apostro + LIWC_Parenth + LIWC_OtherP, 
+                   data=mainst_engage, 
+                   importance='impurity', mtry=3)
+```
+
+```{r}
+consp_forest
+mainst_forest
+```
+
+## Creating variable importance tibble
+
+```{r}
+## Creating a tibble of conspiracy vi
+consp_vi <- vi(consp_forest) %>% 
+  separate(Variable, c("del", "Variable"), sep="_") %>% 
+  select(-del) %>% 
+  mutate(Rank=row_number()) %>% 
+  relocate(Rank, .before=Variable)
+```
+
+```{r}
+## Creating a tibble of mainstream vi
+mainst_vi <- vi(mainst_forest) %>% 
+  separate(Variable, c("del", "Variable"), sep="_") %>% 
+  select(-del) %>% 
+  mutate(Rank=row_number()) %>% 
+  relocate(Rank, .before=Variable)
+```
+
+```{r}
+consp_vi[0:10,]
+mainst_vi[0:10,]
+```
+
+## Visualizing variable importance rankings
+
+```{r Conspiracy VI ranking}
+## Creating barplots of conspiracy variable importance ranking
+consp_plots <- consp_vi %>% 
+  split(factor(sort(rank(row.names(consp_vi))%%3))) %>% 
+  map(~ggplot(.x, aes(x=reorder(Variable, Importance), y=Importance)) +
+        geom_bar(stat='identity') +
+        coord_flip() +
+        xlab("Variable") +
+        ylim(0,1050) +
+        ggtitle("Conspiracy variable importance") +
+        theme_bw())
+```
+
+```{r Conspiracy VI plots}
+consp_plots
+```
+
+```{r Mainstream VI ranking}
+## Creating barplots of mainstream variable importance ranking
+mainst_plots <- mainst_vi %>% 
+  split(factor(sort(rank(row.names(consp_vi))%%3))) %>% 
+  map(~ggplot(.x, aes(x=reorder(Variable, Importance), y=Importance)) +
+        geom_bar(stat='identity') +
+        coord_flip() +
+        xlab("Variable") +
+        ylim(0,5500) +
+        ggtitle("Mainstream variable importance") +
+        theme_bw())
+```
+
+```{r Mainstream VI plots}
+mainst_plots
+```
+
+## Variable importance comparison scatterplot
+
+```{r}
+## Joining variable importance tibbles for comparison 
+vi_join <- left_join(consp_vi, mainst_vi, by="Variable") %>% 
+  setNames(c("C_Rank", "Variable", "C_Importance", "M_Rank", "M_Importance")) %>% 
+  select(Variable, everything())
+```
+
+```{r Overall VI Rank}
+## Creating scatter plot comparing overall vi ranking
+vi_join %>% 
+  ggplot(aes(x=C_Rank, y=M_Rank, label=Variable)) +
+  labs(x= "Conspiracy Feature Rank", y="Mainstream Feature Rank") +
+  ggtitle("Feature rank comparison") +
+  ## Reversing scales so better ranks (lower number) appear higher
+  scale_y_reverse() +
+  scale_x_reverse() +
+  geom_text(alpha=0.7)
+```
+
+```{r Top Conspiracy VI plot}
+## Creating a scatter plot of the top 1/3 conspiracy variables
+vi_join %>% 
+  filter(C_Rank <= 31) %>% 
+  ggplot(aes(x=C_Rank, y=M_Rank, label=Variable)) +
+  labs(x= "Conspiracy Feature Rank", y="Mainstream Feature Rank") +
+  ggtitle("Feature rank comparison (Top Conspiracy VIs)") +
+  scale_y_reverse() +
+  scale_x_reverse() +
+  geom_text(alpha=0.7)
+```
+
+```{r Top Mainstream VI plot}
+## Creating a scatter plot of the top 1/3 mainstream variables
+vi_join %>% 
+  filter(M_Rank <= 31) %>% 
+  ggplot(aes(x=C_Rank, y=M_Rank, label=Variable)) +
+  labs(x= "Conspiracy Feature Rank", y="Mainstream Feature Rank") +
+  ggtitle("Feature rank comparison (Top Mainstream VIs)") +
+  scale_y_reverse() +
+  scale_x_reverse() +
+  geom_text(alpha=0.7)
+```
+
+## Creating linear models
+
+```{r}
+consp_lm <- lm(engagelog ~ LIWC_Clout + LIWC_social + LIWC_ipron + LIWC_time + LIWC_relativ + LIWC_interrog +
+                LIWC_affect + LIWC_affiliation + LIWC_drives + LIWC_focuspresent + LIWC_insight + 
+                LIWC_focuspast + LIWC_percept + LIWC_negemo + LIWC_space + LIWC_ppron + LIWC_power +
+                LIWC_cause + LIWC_tentat + LIWC_hear, consp_engage)
+```
+
+```{r}
+summary(consp_lm)
+```
+
+```{r Checking linear model}
+## Checking residuals and variable inflation (collinearity) issues
+consp_res <- residuals(consp_lm)
+hist(consp_res)
+qqnorm(consp_res)
+plot(fitted(consp_lm), consp_res)
+vif(consp_lm)
+```
+
+```{r}
+## Removing variables with high vif and fitting a new model
+consp_lm2 <- lm(engagelog ~ LIWC_Clout + LIWC_social + LIWC_ipron + LIWC_time + LIWC_interrog +
+                LIWC_affect + LIWC_affiliation + LIWC_focuspresent + LIWC_insight + 
+                LIWC_focuspast + LIWC_percept + LIWC_negemo + LIWC_ppron + LIWC_power +
+                LIWC_cause + LIWC_tentat + LIWC_hear, consp_engage)
+summary(consp_lm2)
+```
+
+```{r Checking new linear model}
+## Checking new model
+consp_res2 <- residuals(consp_lm2)
+hist(consp_res2)
+qqnorm(consp_res2)
+plot(fitted(consp_lm2), consp_res2)
+vif(consp_lm2)
+```
+```
+
