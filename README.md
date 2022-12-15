@@ -7,7 +7,7 @@ This research project analyzes topic-matched conspiratorial and mainstream docum
 
 ## Where the data comes from
 
-This project will utilize LOCO: The 88-million word language of conspiracy corpus. LOCO is composed of topic-matched conspiracy and mainstream documents harvested from 150 websites. The data is hierarchically structured in JSON files, with each document cross-nested within websites and topics. The documents are also annotated for a rich set of linguistic features and metadata. LOCO is made freely available by its authors, licensed under an open access Creative Commons license, permitting use, sharing, adaptation, distribution and reproduction in any medium or format, making it ideal for many avenues of analysis and research such as this one.
+This project utilized LOCO: The 88-million word language of conspiracy corpus. LOCO is composed of topic-matched conspiracy and mainstream documents harvested from 150 websites. The data is hierarchically structured in JSON files, with each document cross-nested within websites and topics. The documents are also annotated for a rich set of linguistic features and metadata. LOCO is made freely available by its authors, licensed under an open access Creative Commons license, permitting use, sharing, adaptation, distribution and reproduction in any medium or format, making it ideal for many avenues of analysis and research such as this one.
 
 Miani, A., Hills, T. & Bangerter, A. LOCO: The 88-million-word language of conspiracy corpus. Behav Res 54, 1794–1817 (2022). https://doi.org/10.3758/s13428-021-01698-z
 
