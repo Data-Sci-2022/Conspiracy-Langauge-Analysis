@@ -88,7 +88,7 @@ sentiment analysis.
 ## Analysis
 
 To view a step-by-step walkthrough of the data analysis, see
-[data_analysis.md](data/data_analysis.md).
+[analysis_walkthrough.md](data/analysis_walkthrough.md).
 
 ### Engagement variables
 
@@ -257,7 +257,7 @@ hiccups involving the scale of the data being too large for github, and
 the repo had to be cloned to remove the oversized files from the commit
 history. Mastering version control and good data habits was a major
 stepping stone throughout this project. In addition, the excellent work
-that LOCO corpus’s authors have done was something of a double-edged
+that the LOCO corpus’s authors have done was something of a double-edged
 sword. Because the authors annotated the corpus so extensively and
 explored it from many angles and with many methods, it made it
 challenging to figure out how to add value to the data through my own
@@ -268,7 +268,7 @@ offer new insights, primarily regarding the “clout” feature and the
 potential differences in lexical features that have an influence on
 engagement between topic-matched conspiracy and mainstream texts. There
 are many opportunities for continued analysis and deeper inquiry based
-about individual lexical features and the documents included in the LOCO
+around individual lexical features and the documents included in the LOCO
 corpus based on this project.
 
 ## References and further reading
