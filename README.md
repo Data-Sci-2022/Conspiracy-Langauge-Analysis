@@ -1,4 +1,4 @@
-# Conspiracy-Langauge-Analysis
+# Conspiracy Langauge Analysis
 By Sen Sub Laban, sen.s@pitt.edu | December 15, 2022
 
 ## Project overview
